@@ -4,7 +4,6 @@ from copy import deepcopy,copy
 import tkinter as tk
 from tkinter import filedialog
 from threading import Thread
-import idna
 
 
 filename=""
