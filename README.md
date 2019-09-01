@@ -1,8 +1,19 @@
-# genetic-asset-splitter
-A genetic algorithm that splits assets between divorced couples based on emotional and monetary value
+# Genetic Asset Splitter
 
-The only dependency is openpyxl
+### This program uses a genetic algorith to find the best way to split assets between divorced couples based on emotional and monetary value of each asset.
+
+### Purpose:
+
+I wrote this program to help out a divorce attorney find ways to split assets between divorced couples. With a problem that has so many solutions to it naturally a genetic algorithm is a great way to find some of the best solutions. The program takes into account an objective monetary value for each asset and a subjective emotional value that each party assigns to each asset. This program is optimized to split the assets 50/50 with the monetary value, make the emotional score for each person the highest and decrease the difference between emotional scores so one person does not have a significant higher score than the other.
+
+
+### Dependencies
+
+The only dependency is openpyxl to read and create a spreadsheet.
+```
 pip install openpyxl
+```
+### How to use:
 
 To use, create a spreasheet with the same format as the sample provided and save it.
 Run the python program follow the prompts on the gui and hit start.
