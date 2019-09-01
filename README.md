@@ -30,6 +30,6 @@ The emotional score of each item is from 1-100 and the program won't use the sum
 
 Using the percentage this way ensures the scores are relative to each other and one person will not be shorted items if they put lower scores compared to the other person.
 
-The spreadsheet that is produced will have the original asset list in the first sheet and then the rest of the sheets are solutions.
+The spreadsheet that is produced will have the original asset list in the first sheet and then the rest of the sheets are solutions. You can see a sample of the output in solutions.xlsx
 
 
