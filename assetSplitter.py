@@ -4,14 +4,14 @@ from copy import deepcopy,copy
 import tkinter as tk
 from tkinter import filedialog
 from threading import Thread
-
+import time
 
 filename=""
 done = False
 newWB = Workbook()
 firstFitness = 0
 wb = ""
-
+numDone = 0
 def splitAssets(filename, popSize,mutationRate,generations,solutions):
 
     global wb
@@ -92,20 +92,16 @@ def splitAssets(filename, popSize,mutationRate,generations,solutions):
             list2FiscalValue = 0
             list1emoValue = 0
             list2emoValue = 0
-
             for items in self.list1:
                 list1FiscalValue += items.monetary
                 list1emoValue += items.emo1
                 list2emoValue += items.emo2
-
             for items in self.list2:
                 list2FiscalValue += items.monetary
-
             list1FiscalPercent = list1FiscalValue / totalFiscalValue
             list2FiscalPercent = list2FiscalValue / totalFiscalValue
             emo1percent = list1emoValue / person1EmoValue
             emo2percent = list2emoValue / person2EmoValue
-
             self.fitness = min(list1FiscalPercent, list2FiscalPercent, emo1percent, emo2percent)
         """
 
@@ -150,64 +146,43 @@ def splitAssets(filename, popSize,mutationRate,generations,solutions):
         return population  #return an array of split objects
     '''
     def breed(split1, split2):
-
         lenChoices = []
         lenChoices.append(len(split1.list1))
         lenChoices.append(len(split1.list2))
         lenChoices.append(len(split2.list1))
         lenChoices.append(len(split2.list2))
-
         childLen = lenChoices[randint(0,3)]
-
         lenMutate = randint(0,100)
         if(lenMutate < mutationRate):
             childLen += randint(int(childLen* -.1 -1), int(childLen * .1 + 1) )
-
         assetChoices = []
         assetChoices.append(split1.list1)
         assetChoices.append(split1.list2)
-
         r = randint(0,1)
         choice1 = assetChoices[r]
         childList1 = []
         childList2 = []
-
-
         for x in range(0,len(choice1)):
-
             if(x < childLen):
                 childList1.append(choice1[x])
             else:
                 childList2.append(choice1[x])
-
-
         copyAssets = deepcopy(assets)
-
         usedAssets = []
         for x in childList1:
             usedAssets.append(x.asset)
         for x in childList2:
             usedAssets.append(x.asset)
-
         for items in copyAssets:
             if(not items.asset in usedAssets):
                 childList2.append(items)
-
-
-
-
-
-
-
         assetMutate = randint(0,100)
         if(assetMutate < mutationRate):
             index1 = randint(0,len(childList1)-1)
             index2 = randint(0,len(childList2)-1)
-
             temp = childList1[index1]
             childList1[index1] = childList2[index2]
             childList2[index2] = temp
-
         child = Split(childList1,childList2)
         return child
     '''
@@ -375,6 +350,7 @@ def splitAssets(filename, popSize,mutationRate,generations,solutions):
 
 
     for y in range(0,solutions):
+        global numDone
         #make initial population
         pop = makeFirstPopulation()
         pop.sort(key=lambda x:x.fitness,reverse=True)
@@ -393,6 +369,7 @@ def splitAssets(filename, popSize,mutationRate,generations,solutions):
         print( pop[0].fitness )
 
         makeSheet(pop[0],y)
+        numDone +=1
 
     saveFile = filedialog.asksaveasfilename(initialdir="/", title="Select File", filetypes=(("Excel Files", "*.xlsx"), ("all files", "*.*")))
 
@@ -421,6 +398,7 @@ popSize = 150
 mutationRate=5
 generations=75
 solutions = 10
+
 filename = "assets.xlsx"
 
 
@@ -445,7 +423,7 @@ def startBut():
     solutions = int(solutionsEntry.get())
 
     secondFrame = tk.Frame(master=root)
-    label = tk.Label(secondFrame,text="Assets are splittings please wait to save the output. \n This may take several minutes",font=("Helvetica",45))
+    label = tk.Label(secondFrame,text="Assets are splittings please \nwait for the save window to pop up. \n This may take several minutes.\n",font=("Helvetica",30))
     label.pack()
     secondFrame.grid(row=0,column=0)
     secondFrame.tkraise()
@@ -454,6 +432,12 @@ def startBut():
     t1 = Thread(target=splitAssets,args=[filename,popSize,mutationRate,generations,solutions])
     t1.start()
 
+    while numDone != solutions:
+        print('checking if done')
+        time.sleep(.2)
+        label.config(text="Assets are splittings please \nwait for the save window to pop up. \n This may take several minutes.\n Completed: " + str(numDone) + "/" + str(solutions),font=("Helvetica",30))
+        root.update_idletasks()
+        root.update()
 
 
 firstFrame.grid(row=0,column=0)
@@ -497,9 +481,3 @@ root.after(10,func=checkDone)
 root.mainloop()
 
 #read from spreadsheet and make the asset objects
-
-
-
-
-
-
